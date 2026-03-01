@@ -19,7 +19,7 @@ with col1:
     if os.path.exists("assets/logo.png"):
         st.image("assets/logo.png", width=120)
     else:
-        st.subheader("🏗️")
+        st.subheader("assets/logo.png")
 
 st.divider()
 
@@ -186,11 +186,6 @@ st.markdown(f"""
         width: 100%;
         box-shadow: 2px 2px 10px rgba(0,0,0,0.05);
     ">
-        <p style="font-size: 20px; margin-bottom: 0px; color: #666; font-family: sans-serif;">
-            Total Contrato: <b>{METRAGEM_CONTRATO_FIXA:,.2f} m²</b>
-        </p>
-        <p style="font-size: 20px; margin-top: 5px; color: #666; font-family: sans-serif;">
-            Executado: <b>{m2_real:,.2f} m²</b>
         </p>
         <hr style="border: 0; border-top: 1px solid #ddd; margin: 15px 0 15px auto; width: 40%;">
         <p style="margin-bottom: 0px; font-size: 18px; color: #2ECC71; font-weight: bold; font-family: sans-serif; letter-spacing: 1px;">
