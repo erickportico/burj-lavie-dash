@@ -5,11 +5,6 @@ import re
 import os
 import time
 
-# No VS Code, dentro do app.py:
-sheet_id = "https://docs.google.com/spreadsheets/d/1-eOeHLGamdB4QQfd_h8bm4-02Bu_6QJs/edit?gid=1498853259#gid=1498853259"
-url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=xlsx"
-df = pd.read_excel(url)
-
 # 1. Configuração da página (deve ser a primeira linha do Streamlit)
 st.set_page_config(page_title="Burj Lavie Dash", layout="wide")
 
@@ -29,9 +24,9 @@ with col1:
 st.divider()
 
 # --- 2. CONSTANTES E LINKS ---
-URL_CONTROLE = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRf-GmTIzVVaAz-x5uZR8kEE7CkO6MZLa5ChRmcsWdrX2mcr_NkK2jTZSSCJLTJgubWl9kSY16UupzA/pub?gid=1866404057&single=true&output=csv"
-URL_VALOR_CONTRATO = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRf-GmTIzVVaAz-x5uZR8kEE7CkO6MZLa5ChRmcsWdrX2mcr_NkK2jTZSSCJLTJgubWl9kSY16UupzA/pub?gid=1669157044&single=true&output=csv"
-URL_MEDICAO_SERVICOS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRf-GmTIzVVaAz-x5uZR8kEE7CkO6MZLa5ChRmcsWdrX2mcr_NkK2jTZSSCJLTJgubWl9kSY16UupzA/pub?gid=1938534493&single=true&output=csv"
+URL_CONTROLE = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRVExszkNXNNlYOBVkCnjwrcBFFDj7XX-H5oOkAmOfOIjCySfPINUOYDnuv1Y5o3A/pub?gid=1498853259&single=true&output=csv"
+URL_VALOR_CONTRATO = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRVExszkNXNNlYOBVkCnjwrcBFFDj7XX-H5oOkAmOfOIjCySfPINUOYDnuv1Y5o3A/pub?gid=1894460667&single=true&output=csv"
+URL_MEDICAO_SERVICOS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRVExszkNXNNlYOBVkCnjwrcBFFDj7XX-H5oOkAmOfOIjCySfPINUOYDnuv1Y5o3A/pub?gid=1458244410&single=true&output=csv"
 
 VALOR_SERVICO_INSTALACAO = 140000.00
 METRAGEM_CONTRATO_FIXA = 1572.48
