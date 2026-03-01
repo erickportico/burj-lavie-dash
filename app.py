@@ -5,8 +5,10 @@ import re
 import os
 import time
 
-import streamlit as st
-from PIL import Image
+# No VS Code, dentro do app.py:
+sheet_id = "1seu_codigo_longo_do_google_sheets_aqui"
+url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=xlsx"
+df = pd.read_excel(url)
 
 # 1. Configuração da página (deve ser a primeira linha do Streamlit)
 st.set_page_config(page_title="Burj Lavie Dash", layout="wide")
