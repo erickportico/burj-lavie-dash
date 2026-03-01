@@ -6,7 +6,7 @@ import os
 import time
 
 # No VS Code, dentro do app.py:
-sheet_id = "1seu_codigo_longo_do_google_sheets_aqui"
+sheet_id = "https://docs.google.com/spreadsheets/d/1-eOeHLGamdB4QQfd_h8bm4-02Bu_6QJs/edit?gid=1498853259#gid=1498853259"
 url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=xlsx"
 df = pd.read_excel(url)
 
