@@ -82,7 +82,7 @@ with col_l:
 with col_t:
     st.title("BURJ LAVIE")
 
-tab1, tab2, tab3 = st.tabs(["📊 Instalação & Financeiro", "📅 Recebimento", "📏 Medição Atual"])
+tab1, tab2, tab3 = st.tabs(["📊 Instalação e Financeiro", "📅 Recebimento", "📏 Medição Atual"])
 
 # --- TAB 1: INSTALAÇÃO E FINANCEIRO ---
 with tab1:
@@ -175,8 +175,7 @@ with tab3:
         k1.metric("📏 M² Realizado", f"{m2_real:,.2f} m²")
         k2.metric("💰 Valor Bruto", f"R$ {v_bruto:,.2f}")
         k3.metric("💵 Líquido (-5%)", f"R$ {v_bruto * 0.95:,.2f}")
-        
-st.markdown(f"""
+        st.markdown(f"""
     <div style="
         background-color: rgba(248, 249, 250, 0.7); /* Cor cinza claro com 70% de opacidade */
         padding: 30px; 
