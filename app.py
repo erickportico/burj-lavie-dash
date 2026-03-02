@@ -5,20 +5,6 @@ import re
 import os
 import time
 
-sheet_id = "https://docs.google.com/spreadsheets/d/1-eOeHLGamdB4QQfd_h8bm4-02Bu_6QJs/edit?gid=1498853259#gid=1498853259"
-url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=xlsx"
-
-@st.cache_data(ttl=60) 
-def carregar_dados(url_planilha):
-    # O try/except aqui evita que o site caia se a internet oscilar
-    try:
-        return pd.read_excel(url_planilha)
-    except Exception as e:
-        st.error(f"Erro ao conectar com o Google: {e}")
-        return None
-
-df = carregar_dados(url)
-
 # 1. Configuração da página (deve ser a primeira linha do Streamlit)
 st.set_page_config(page_title="Burj Lavie Dash", layout="wide")
 
