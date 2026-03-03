@@ -198,6 +198,7 @@ with tab3:
         </p>
     </div>
 """, unsafe_allow_html=True)
+        
 
 with tab4:
     st.subheader("📄 Relatório Automático para Impressão")
