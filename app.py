@@ -156,62 +156,45 @@ with tab2:
             st.dataframe(df_r[['Data_F', 'Modulos']].rename(columns={'Data_F':'Data', 'Modulos':'Qtd'}), use_container_width=True, hide_index=True)
 
 # --- TAB 3: MEDIÇÃO ATUAL ---
-# Crie a aba de impressão
 with tab3:
-    st.subheader("📄 Relatório de Medição para Impressão")
-    
-    # Botão para o usuário imprimir a página do navegador (Ctrl + P)
-    st.info("💡 Dica: Para salvar em PDF, use Ctrl + P e selecione 'Salvar como PDF'.")
-
-    # Estrutura do Cabeçalho Estilizado (Baseado na sua imagem)
-    st.markdown(f"""
-    <div style="border: 2px solid #333; padding: 20px; font-family: Arial, sans-serif;">
-        <table style="width:100%; border-collapse: collapse;">
-            <tr>
-                <td style="font-size: 24px; font-weight: bold;">PLANILHA DE MEDIÇÃO</td>
-                <td style="text-align: right;"><img src="https://sua_url_da_logo_aqui.png" width="150"></td>
-            </tr>
-        </table>
-        <br>
-        <table style="width:100%; border: 1px solid #ddd;">
-            <tr style="background-color: #f9f9f9;">
-                <td style="padding: 8px;"><b>Valor do contrato:</b></td>
-                <td style="text-align: right;">R$ 1.750.000,00</td>
-                <td style="color: red; font-weight: bold; text-align: center;">P-076-24 BURJ LAVIE</td>
-            </tr>
-            <tr>
-                <td style="padding: 8px;"><b>Valor de serviço:</b></td>
-                <td style="text-align: right;">R$ 140.000,00</td>
-                <td style="text-align: center;">Mês de referência: Fevereiro/26</td>
-            </tr>
-        </table>
+    st.subheader("📝 Relatório de Medição")
+    df_m = fetch_data(URL_MEDICAO_SERVICOS)
+    if not df_m.empty:
+        flat_data = [str(x).strip() for x in df_m.values.flatten() if str(x) != 'nan']
+        def find_v(label):
+            for i, txt in enumerate(flat_data):
+                if label in txt and i+1 < len(flat_data): return limpar_num(flat_data[i+1])
+            return 0.0
+        
+        m2_real = find_v("M² Realizado Atual")
+        v_bruto = (m2_real / METRAGEM_CONTRATO_FIXA) * VALOR_SERVICO_INSTALACAO
+        
+        k1, k2, k3 = st.columns(3)
+        k1.metric("📏 M² Realizado", f"{m2_real:,.2f} m²")
+        k2.metric("💰 Valor Bruto", f"R$ {v_bruto:,.2f}")
+        k3.metric("💵 Líquido (-5%)", f"R$ {v_bruto * 0.95:,.2f}")
+        st.markdown(f"""
+    <div style="
+        background-color: rgba(248, 249, 250, 0.7); /* Cor cinza claro com 70% de opacidade */
+        padding: 30px; 
+        border-radius: 15px; 
+        border-right: 8px solid #2ECC71;
+        text-align: right; 
+        width: 100%;
+        box-shadow: 2px 2px 10px rgba(0,0,0,0.05);
+    ">
+        <p style="font-size: 20px; margin-bottom: 0px; color: #666; font-family: sans-serif;">
+            Total Contrato: <b>{METRAGEM_CONTRATO_FIXA:,.2f} m²</b>
+        </p>
+        <p style="font-size: 20px; margin-top: 5px; color: #666; font-family: sans-serif;">
+            Executado: <b>{m2_real:,.2f} m²</b>
+        </p>
+        <hr style="border: 0; border-top: 1px solid #ddd; margin: 15px 0 15px auto; width: 40%;">
+        <p style="margin-bottom: 0px; font-size: 18px; color: #2ECC71; font-weight: bold; font-family: sans-serif; letter-spacing: 1px;">
+            LÍQUIDO A RECEBER
+        </p>
+        <p style="color: #2ECC71; font-size: 40px; font-weight: 900; line-height: 1; margin-top: 5px; font-family: sans-serif;">
+            R$ {v_bruto * 0.95:,.2f}
+        </p>
     </div>
-    """, unsafe_allow_html=True)
-
-    # Criando a tabela de dados (Baseada nas colunas da imagem)
-    colunas_impressao = {
-        "REFERÊNCIA": ["EV", "", ""],
-        "Descrição": ["Pele de vidro Entre Vãos", "", "TOTAL"],
-        "Metragem": [1572.48, "", 1572.48],
-        "% TOTAL": ["100%", "", "100%"],
-        "% Exec. acumulada": ["35,65%", "", ""],
-        "Valores Atribuídos": ["R$ 140.000,00", "", "R$ 140.000,00"],
-        "3º medição": ["-", "", "-"]
-    }
-    
-    df_impressao = pd.DataFrame(colunas_impressao)
-    
-    # Exibe a tabela formatada
-    st.table(df_impressao)
-
-    # Espaço para Assinaturas
-    st.markdown("""
-    <br><br>
-    <table style="width:100%;">
-        <tr>
-            <td style="border-top: 1px solid #000; width: 45%; text-align: center;">Técnico Responsável</td>
-            <td style="width: 10%;"></td>
-            <td style="border-top: 1px solid #000; width: 45%; text-align: center;">Responsável / Obra</td>
-        </tr>
-    </table>
-    """, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
