@@ -80,7 +80,7 @@ with col_l:
 with col_t:
     st.title("BURJ LAVIE")
 
-tab1, tab2, tab3 = st.tabs(["📊 Instalação e Financeiro", "📅 Recebimento", "📏 Medição Atual"])
+tab1, tab2, tab3, tab4 = st.tabs(["Instalação", "Financeiro", "Medição Atual", "Imprimir Medição"])
 
 # --- TAB 1: INSTALAÇÃO E FINANCEIRO ---
 with tab1:
@@ -198,3 +198,58 @@ with tab3:
         </p>
     </div>
 """, unsafe_allow_html=True)
+
+with tab4:
+    st.subheader("📄 Relatório Automático para Impressão")
+    
+    # --- CÁLCULOS AUTOMÁTICOS BASEADOS NA PLANILHA ---
+    # Aqui usamos o df que você já carregou do Google Sheets
+    try:
+        total_m2 = df.iloc[:, 2].sum() # Exemplo: Soma a 3ª coluna
+        valor_total_contrato = METRAGEM_CONTRATO_FIXA * 100 # Ajuste conforme sua regra
+        # Adicione aqui as variáveis específicas que você quer puxar do df
+    except:
+        total_m2 = 0
+        valor_total_contrato = 0
+
+    # --- CABEÇALHO FORMATADO (HTML/CSS) ---
+    st.markdown(f"""
+    <div style="border: 2px solid #333; padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: white; color: black;">
+        <div style="text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px;">
+            <h1 style="margin: 0; font-size: 24px;">PLANILHA DE MEDIÇÃO - BURJ LAVIE</h1>
+            <p style="margin: 5px 0;">Referência: {pd.to_datetime('today').strftime('%B/%Y')}</p>
+        </div>
+        
+        <table style="width:100%; margin-bottom: 20px;">
+            <tr>
+                <td><b>Cliente:</b> BURJ LAVIE</td>
+                <td style="text-align: right;"><b>Contrato:</b> P-076-24</td>
+            </tr>
+            <tr>
+                <td><b>Metragem Total:</b> {total_m2:,.2f} m²</td>
+                <td style="text-align: right;"><b>Status:</b> Atualizado via Sheets</td>
+            </tr>
+        </table>
+
+        <div style="background-color: #f2f2f2; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+            <h3 style="margin-top: 0; color: #2ECC71;">Resumo Financeiro</h3>
+            <p style="font-size: 18px;">Líquido a Receber: <b>R$ {v_bruto * 0.95:,.2f}</b></p>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # --- TABELA DE DADOS AUTOMÁTICA ---
+    # Selecionamos apenas as colunas relevantes da sua planilha para a impressão
+    if df is not None:
+        st.write("### Detalhamento da Medição")
+        # Mostra as primeiras colunas da planilha de controle automaticamente
+        st.dataframe(df.iloc[:, [0, 1, 2, 3, 21]], use_container_width=True)
+
+    # --- CAMPO DE ASSINATURA ---
+    st.markdown("""
+    <br><br><br>
+    <div style="display: flex; justify-content: space-between; text-align: center;">
+        <div style="border-top: 1px solid #000; width: 40%;">Assinatura Responsável</div>
+        <div style="border-top: 1px solid #000; width: 40%;">Assinatura Cliente</div>
+    </div>
+    """, unsafe_allow_html=True)        
