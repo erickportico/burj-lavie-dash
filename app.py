@@ -5,6 +5,8 @@ import re
 import os
 import time
 
+df = None  # Inicializa a variável como vazia para evitar o erro de referência
+
 # 1. Configuração da página (deve ser a primeira linha do Streamlit)
 st.set_page_config(page_title="Burj Lavie Dash", layout="wide")
 
@@ -205,13 +207,12 @@ with tab4:
     
     # --- CÁLCULOS AUTOMÁTICOS BASEADOS NA PLANILHA ---
     # Aqui usamos o df que você já carregou do Google Sheets
-    try:
-        total_m2 = df.iloc[:, 2].sum() # Exemplo: Soma a 3ª coluna
-        valor_total_contrato = METRAGEM_CONTRATO_FIXA * 100 # Ajuste conforme sua regra
-        # Adicione aqui as variáveis específicas que você quer puxar do df
-    except:
-        total_m2 = 0
-        valor_total_contrato = 0
+   # Tente carregar os dados
+try:
+    df = carregar_dados(url)
+except Exception as e:
+    st.error(f"Não foi possível carregar a planilha: {e}")
+    df = None # Garante que df exista, mesmo que vazio
 
     # --- CABEÇALHO FORMATADO (HTML/CSS) ---
     st.markdown(f"""
@@ -241,7 +242,9 @@ with tab4:
 
     # --- TABELA DE DADOS AUTOMÁTICA ---
     # Selecionamos apenas as colunas relevantes da sua planilha para a impressão
-    if df is not None:
+    # Em vez de apenas 'if df is not None:', use:
+    if 'df' in locals() and df is not None:
+    # ... seu código da aba de impressão aqui ...
         st.write("### Detalhamento da Medição")
         # Mostra as primeiras colunas da planilha de controle automaticamente
         st.dataframe(df.iloc[:, [0, 1, 2, 3, 21]], use_container_width=True)
