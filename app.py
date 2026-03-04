@@ -12,12 +12,12 @@ st.set_page_config(page_title="Burj Lavie Dash", layout="wide")
 col1, col2 = st.columns([1, 4])
 
 with col1:
-    # Ajuste de respiro com espaços padrão
-    st.write(" ") 
+    # O comando abaixo deve ter exatamente 4 espaços de recuo
+    st.write(" ") # Pequeno ajuste de respiro
     if os.path.exists("assets/logo.png"):
         st.image("assets/logo.png", width=120)
     else:
-        st.subheader(" ")
+        st.subheader("      ")
 
 st.divider()
 
@@ -123,4 +123,71 @@ with tab1:
             ce, cd = st.columns([1, 1.5])
             with ce:
                 st.plotly_chart(px.pie(names=['Instalado', 'Pendente'], values=[pago_m2, max(0.0, METRAGEM_CONTRATO_FIXA-pago_m2)], 
-                                       hole=0.6,
+                                       hole=0.6, title="Progresso Total (%)", color_discrete_map={'Instalado': '#2ECC71', 'Pendente': '#E74C3C'}), use_container_width=True)
+            with cd:
+                df_p = df_i.melt(id_vars='Referencia', value_vars=['M2 Instalado', 'Area Pendente'], var_name='Status', value_name='Metragem')
+                st.plotly_chart(px.bar(df_p, x='Referencia', y='Metragem', color='Status', title="Progresso por Lote", barmode='stack',
+                                       color_discrete_map={'M2 Instalado': '#2ECC71', 'Area Pendente': '#E74C3C'}), use_container_width=True)
+                
+                
+# --- TAB 2: RECEBIMENTO ---
+with tab2:
+    df_raw_r = fetch_data(URL_CONTROLE)
+    if not df_raw_r.empty:
+        recebidos = []
+        pares = [(7, 8), (9, 10), (11, 12), (13, 14), (15, 16)]
+        for i in range(2, len(df_raw_r)):
+            for col_d, col_q in pares:
+                d_str = str(df_raw_r.iloc[i, col_d]).strip().lower()
+                if d_str not in ["nan", "", "none", "0"]:
+                    try:
+                        dt = pd.to_datetime(d_str, dayfirst=True) if "/" in d_str else pd.to_datetime(float(d_str), unit='D', origin='1899-12-30')
+                        recebidos.append({'Data': dt, 'Modulos': limpar_num(df_raw_r.iloc[i, col_q])})
+                    except: continue
+        
+        if recebidos:
+            df_r = pd.DataFrame(recebidos).groupby('Data')['Modulos'].sum().reset_index().sort_values('Data')
+            df_r['Data_F'] = df_r['Data'].dt.strftime('%d/%m/%Y')
+            st.subheader("📋 Gestão de Recebimento")
+            ca, cb = st.columns(2)
+            ca.metric("📦 Total Recebido", f"{int(df_r['Modulos'].sum())} un")
+            cb.metric("🎯 Média p/ Entrega", f"{df_r['Modulos'].mean():.1f} un")
+            st.plotly_chart(px.bar(df_r, x='Data_F', y='Modulos', text='Modulos', title="Histórico de Entregas", color_discrete_sequence=['#1E3A5F']))
+            st.dataframe(df_r[['Data_F', 'Modulos']].rename(columns={'Data_F':'Data', 'Modulos':'Qtd'}), use_container_width=True, hide_index=True)
+
+# --- TAB 3: MEDIÇÃO ATUAL ---
+with tab3:
+    st.subheader("📝 Relatório de Medição")
+    df_m = fetch_data(URL_MEDICAO_SERVICOS)
+    if not df_m.empty:
+        flat_data = [str(x).strip() for x in df_m.values.flatten() if str(x) != 'nan']
+        def find_v(label):
+            for i, txt in enumerate(flat_data):
+                if label in txt and i+1 < len(flat_data): return limpar_num(flat_data[i+1])
+            return 0.0
+        
+        m2_real = find_v("M² Realizado Atual")
+        v_bruto = (m2_real / METRAGEM_CONTRATO_FIXA) * VALOR_SERVICO_INSTALACAO
+        
+        k1, k2, k3 = st.columns(3)
+        k1.metric("📏 M² Realizado", f"{m2_real:,.2f} m²")
+        k2.metric("💰 Valor Bruto", f"R$ {v_bruto:,.2f}")
+        k3.metric("💵 Líquido (-5%)", f"R$ {v_bruto * 0.95:,.2f}")
+        st.markdown(f"""
+    <div style="
+        background-color: rgba(248, 249, 250, 0.7); /* Cor cinza claro com 70% de opacidade */
+        padding: 30px; 
+        border-radius: 15px; 
+        border-right: 8px solid #2ECC71;
+        text-align: right; 
+        width: 100%;
+        box-shadow: 2px 2px 10px rgba(0,0,0,0.05);
+    ">
+        <p style="font-size: 20px; margin-bottom: 0px; color: #666; font-family: sans-serif;">
+            Total Contrato: <b>{METRAGEM_CONTRATO_FIXA:,.2f} m²</b>
+        </p>
+        <p style="font-size: 20px; margin-top: 5px; color: #666; font-family: sans-serif;">
+            Executado: <b>{m2_real:,.2f} m²</b>
+        </p>
+        <hr style="border: 0; border-top: 1px solid #ddd; margin: 15px 0 15px auto; width: 40%;">
+        <p style="margin-bottom: 0px; font-size: 18px; color: #2ECC71; font-weight:
