@@ -190,4 +190,11 @@ with tab3:
             Executado: <b>{m2_real:,.2f} m²</b>
         </p>
         <hr style="border: 0; border-top: 1px solid #ddd; margin: 15px 0 15px auto; width: 40%;">
-        <p style="margin-bottom: 0px; font-size: 18px; color: #2ECC71; font-weight:
+        <p style="margin-bottom: 0px; font-size: 18px; color: #2ECC71; font-weight: bold; font-family: sans-serif; letter-spacing: 1px;">
+         LÍQUIDO A RECEBER
+        </p>
+            <p style="color: #2ECC71; font-size: 40px; font-weight: 900; line-height: 1; margin-top: 5px; font-family: sans-serif;">
+            R$ {v_bruto * 0.95:,.2f}
+            </p>
+        </div>
+""", unsafe_allow_html=True)
