@@ -123,4 +123,14 @@ with tab1:
     if not df_raw.empty:
         setor = df_raw.iloc[2:]
         dados_i = []
-        for _, row in
+        for _, row in setor.iterrows():  # <-- ESTA É A LINHA 126
+            ref = str(row[0]).strip()
+            if ref and ref != 'nan':
+                area_t = limpar_num(row[6])
+                m2_inst = limpar_num(row[21])
+                dados_i.append({
+                    'Referencia': ref, 
+                    'Area Total': area_t, 
+                    'M2 Instalado': m2_inst, 
+                    'Area Pendente': max(0.0, area_t - m2_inst)
+                })
