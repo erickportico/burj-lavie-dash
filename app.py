@@ -205,55 +205,25 @@ with tab3:
 with tab4:
     st.subheader("📄 Relatório Automático para Impressão")
     
-    # --- CÁLCULOS AUTOMÁTICOS BASEADOS NA PLANILHA ---
-    # Aqui usamos o df que você já carregou do Google Sheets
-   # Tente carregar os dados
-try:
-    df = carregar_dados(url)
-except Exception as e:
-    st.error(f"Não foi possível carregar a planilha: {e}")
-    df = None # Garante que df exista, mesmo que vazio
+    # --- 1. GARANTIR QUE OS CÁLCULOS EXISTAM ANTES DO HTML ---
+    if df is not None:
+        try:
+            # Aqui calculamos a metragem a partir da coluna correta
+            # Se a metragem estiver na coluna 3 (índice 2), usamos df.iloc[:, 2]
+            total_m2 = df.iloc[:, 2].sum() 
+        except Exception:
+            total_m2 = 0.0
+    else:
+        total_m2 = 0.0
 
-    # --- CABEÇALHO FORMATADO (HTML/CSS) ---
+    # Agora o Python já conhece 'total_m2', então o erro na linha 231 some:
     st.markdown(f"""
-    <div style="border: 2px solid #333; padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: white; color: black;">
-        <div style="text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px;">
-            <h1 style="margin: 0; font-size: 24px;">PLANILHA DE MEDIÇÃO - BURJ LAVIE</h1>
-            <p style="margin: 5px 0;">Referência: {pd.to_datetime('today').strftime('%B/%Y')}</p>
-        </div>
-        
-        <table style="width:100%; margin-bottom: 20px;">
+    <div style="border: 2px solid #333; padding: 20px; background-color: white; color: black;">
+        <table style="width:100%;">
             <tr>
                 <td><b>Cliente:</b> BURJ LAVIE</td>
-                <td style="text-align: right;"><b>Contrato:</b> P-076-24</td>
-            </tr>
-            <tr>
-                <td><b>Metragem Total:</b> {total_m2:,.2f} m²</td>
-                <td style="text-align: right;"><b>Status:</b> Atualizado via Sheets</td>
+                <td style="text-align: right;"><b>Metragem Total:</b> {total_m2:,.2f} m²</td>
             </tr>
         </table>
-
-        <div style="background-color: #f2f2f2; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
-            <h3 style="margin-top: 0; color: #2ECC71;">Resumo Financeiro</h3>
-            <p style="font-size: 18px;">Líquido a Receber: <b>R$ {v_bruto * 0.95:,.2f}</b></p>
-        </div>
     </div>
     """, unsafe_allow_html=True)
-
-    # --- TABELA DE DADOS AUTOMÁTICA ---
-    # Selecionamos apenas as colunas relevantes da sua planilha para a impressão
-    # Em vez de apenas 'if df is not None:', use:
-    if 'df' in locals() and df is not None:
-    # ... seu código da aba de impressão aqui ...
-        st.write("### Detalhamento da Medição")
-        # Mostra as primeiras colunas da planilha de controle automaticamente
-        st.dataframe(df.iloc[:, [0, 1, 2, 3, 21]], use_container_width=True)
-
-    # --- CAMPO DE ASSINATURA ---
-    st.markdown("""
-    <br><br><br>
-    <div style="display: flex; justify-content: space-between; text-align: center;">
-        <div style="border-top: 1px solid #000; width: 40%;">Assinatura Responsável</div>
-        <div style="border-top: 1px solid #000; width: 40%;">Assinatura Cliente</div>
-    </div>
-    """, unsafe_allow_html=True)        
