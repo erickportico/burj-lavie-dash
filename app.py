@@ -199,7 +199,7 @@ with tab3:
     </div>
 """, unsafe_allow_html=True)
         
-
+# --- TAB 3: IMPRIMIR MEDIÇÃO ---
 with tab4:
     st.subheader("📄 Relatório Automático para Impressão")
     
