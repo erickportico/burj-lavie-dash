@@ -83,7 +83,6 @@ with col_t:
 tab1, tab2, tab3 = st.tabs(["Instalação", "Financeiro", "Medição Atual"])
 
 # --- TAB 1: INSTALAÇÃO E FINANCEIRO ---
-# --- TAB 1: INSTALAÇÃO E FINANCEIRO ---
 with tab1:
     df_contrato = fetch_data(URL_VALOR_CONTRATO)
     v_total_contrato = limpar_num(df_contrato.iloc[2, 1]) if not df_contrato.empty else 1750000.0
@@ -97,44 +96,20 @@ with tab1:
             if ref and ref != 'nan':
                 area_t = limpar_num(row[6])
                 m2_inst = limpar_num(row[21])
-                
-                # --- NOVAS COLUNAS APÓS A Q (Índice 16) ---
-                col_r = str(row[17]).strip() if len(row) > 17 else "" # Coluna R
-                col_s = str(row[18]).strip() if len(row) > 18 else "" # Coluna S
-                
-                dados_i.append({
-                    'Referencia': ref, 
-                    'Area Total': area_t, 
-                    'M2 Instalado': m2_inst, 
-                    'Entrega R': col_r,      # Nova Coluna 1
-                    'Entrega S': col_s,      # Nova Coluna 2
-                    'Area Pendente': max(0.0, area_t - m2_inst)
-                })
+                dados_i.append({'Referencia': ref, 'Area Total': area_t, 'M2 Instalado': m2_inst, 'Area Pendente': max(0.0, area_t - m2_inst)})
         
         df_i = pd.DataFrame(dados_i)
-        
         if not df_i.empty:
             pago_m2 = df_i['M2 Instalado'].sum()
             progresso_pct = (pago_m2 / METRAGEM_CONTRATO_FIXA)
             v_medido_bruto = progresso_pct * VALOR_SERVICO_INSTALACAO
             valor_retencao = v_medido_bruto * 0.05
             
-            # ... (Mantenha seus metrics aqui: m1, m2, m3) ...
             st.subheader("💰 Resumo Financeiro")
             m1, m2, m3 = st.columns(3)
             m1.metric("🛠️ Total do Serviço", f"R$ {VALOR_SERVICO_INSTALACAO:,.2f}")
             m2.metric("Meta Total", f"{METRAGEM_CONTRATO_FIXA:,.2f} m²")
             m3.metric("✅ Instalado", f"{pago_m2:,.2f} m²", f"{progresso_pct*100:.1f}%")
-
-            # Exibição da Tabela com as novas colunas
-            st.markdown("### 📋 Detalhamento dos Lotes")
-            st.dataframe(
-                df_i[['Referencia', 'Area Total', 'M2 Instalado', 'Entrega R', 'Entrega S', 'Area Pendente']],
-                use_container_width=True,
-                hide_index=True
-            )
-
-            # ... (Mantenha os gráficos de pizza e barras abaixo) ...
 
             st.divider()
             c1, c2, c3 = st.columns(3)
